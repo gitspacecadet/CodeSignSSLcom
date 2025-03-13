@@ -34,9 +34,35 @@ $plainTotp = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($totpPtr)
 # Use $plainPassword and $plainTotp securely within your script only when needed.
 
 # AL:Go and BCContainerHelper helper libraries import
-# Write-Host "Importing AL:Go and BCContainerHelper helper libraries..."
-# . (Join-Path -Path $PSScriptRoot -ChildPath "..\AL-Go-Helper.ps1" -Resolve)
-# DownloadAndImportBcContainerHelper
+Write-Host "Importing AL:Go and BCContainerHelper helper libraries..."
+# $helperBasePath = "..\..\_actions\microsoft\AL-Go-Actions\"
+# $bcContainerHelperBasePath = "C:\ProgramData\BcContainerHelper\"
+
+# # Find the latest versions of required helpers
+# $alGoActionsPath = Get-ChildItem -Path $helperBasePath -Directory | 
+# Sort-Object Name -Descending | 
+# Select-Object -First 1
+# if ($null -eq $alGoActionsPath) {
+#     throw "AL-Go-Actions directory not found."
+# }
+# Write-Host "AL-Go Actions path: $($alGoActionsPath.Fullname)"
+
+# $versionRegex = '^\d+\.\d+\.\d+$'
+# $bcContainerHelperPath = Get-ChildItem -Path $bcContainerHelperBasePath -Directory | 
+# Where-Object { $_.Name -match $versionRegex } |
+# Sort-Object Name -Descending | 
+# Select-Object -First 1
+# if ($null -eq $bcContainerHelperPath) {
+#     throw "BcContainerHelper directory not found."
+# }
+# Write-Host "BcContainerHelper path: $($bcContainerHelperPath.FullName)"
+
+# # Importing helpers
+# $helperPath = Join-Path -Path $alGoActionsPath.FullName -ChildPath "AL-Go-Helper.ps1"
+# . $helperPath
+# DownloadAndImportBcContainerHelper -baseFolder $bcContainerHelperPath.FullName
+# $bcHelperFunctionsPath = Join-Path -Path $bcContainerHelperPath.FullName -ChildPath "BcContainerHelper\HelperFunctions.ps1"
+# . $bcHelperFunctionsPath
 Write-Output "Base path: $env:GITHUB_WORKSPACE"
 $rawPath = Join-Path -Path $env:GITHUB_WORKSPACE -ChildPath "..\..\_actions\microsoft\AL-Go-Actions"
 $basePath = (Resolve-Path $rawPath).Path
@@ -45,11 +71,17 @@ $versionFolder = Get-ChildItem -Path $basePath -Directory | Sort-Object Name -De
 . (Join-Path -Path $versionFolder.FullName -ChildPath "AL-Go-Helper.ps1" -Resolve)
 DownloadAndImportBcContainerHelper
 
-Write-Host "=========== Signing $appFile process ===========" -ForegroundColor Yellow
-Write-Host "===== 1. Register NavSip.dll =====" -ForegroundColor Yellow
+# DownloadAndImportBcContainerHelper
+# $bcHelperFunctionsPath = Join-Path -Path $bcContainerHelperPath.FullName -ChildPath "BcContainerHelper\HelperFunctions.ps1"
+# . $bcHelperFunctionsPath
+Write-Host "Signing $appFile"
+
+Write-Host "====================== Signing $appFile process ======================"
+Write-Host "===== 1. Register NavSip.dll ====="
 function GetNavSipFromArtifacts
 (
     [string] $NavSipDestination = "C:\Windows\System32"
+    #"C:\Windows\System32\NavSip.dll"
 ) {
     $artifactTempFolder = Join-Path $([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
 
@@ -97,7 +129,6 @@ if (-not (Test-Path $downloadFolder)) {
 }
 
 # Prepare prerequisites for signing
-Write-Host "===== 2. Download/Install Visual C++ 2013/2015-2022 Redistribuitable Prerequisites =====" -ForegroundColor Yellow
 if (!(Test-Path "C:\Windows\System32\msvcr120.dll")) {
     Write-Host "Downloading vcredist_x86"
         (New-Object System.Net.WebClient).DownloadFile('https://bcartifacts.blob.core.windows.net/prerequisites/vcredist_x86.exe', "$downloadFolder\vcredist_x86.exe")
@@ -116,8 +147,6 @@ if (!(Test-Path "C:\Windows\System32\vcruntime140_1.dll")) {
     start-process -Wait -FilePath $downloadFolder\vcredist_x64-140.exe -ArgumentList /q, /norestart
 }
 # Check/Download install eSignerCKATool
-Write-Host "===== 3. Download/Install eSignerCKATool =====" -ForegroundColor Yellow
-# Create a temporary directory for the installation
 $TempInstallDir = Join-Path ([System.IO.Path]::GetTempPath()) "eSignerSetup"
 New-Item -ItemType Directory -Force -Path $TempInstallDir | Out-Null
 $eSignerCKATool = Join-Path -Path $TempInstallDir -ChildPath "eSignerCKATool.exe"
@@ -155,7 +184,6 @@ if (!(Test-Path $eSignerCKATool)) {
     Remove-Item -Path $tempExtractPath -Recurse -Force
 
     # Install eSigner
-    Write-Output "Installing eSignerCKA..."
     $installerPath = Join-Path $setupFolder "eSigner_CKA_Installer.exe"
     $installArgs = "/CURRENTUSER /VERYSILENT /SUPPRESSMSGBOXES /DIR=`"$TempInstallDir`""
     Write-Output "Running installer: $installerPath $installArgs"
@@ -166,6 +194,7 @@ if (-not (Test-Path $TempInstallDir)) {
     Write-Error "Installation failed - directory not found"
     exit 1
 }
+
 # Run additional tools
 $registerKsp = Join-Path $TempInstallDir "RegisterKSP.exe"
 $configExe = Join-Path $TempInstallDir "eSignerCSP.Config.exe"
@@ -174,23 +203,24 @@ if (Test-Path $registerKsp) {
     Write-Output "Running RegisterKSP.exe..."
     Start-Process $registerKsp -Wait
 }
+
 if (Test-Path $configExe) {
     Write-Output "Running eSignerCSP.Config.exe..."
     Start-Process $configExe -Wait
 }
+
 # Only run installer again if $setupFolder was defined
 if ($setupFolder -ne $null) {
     Start-Process (Join-Path $setupFolder "eSigner_CKA_Installer.exe") -ArgumentList "/CURRENTUSER /VERYSILENT /SUPPRESSMSGBOXES /DIR=`"$TempInstallDir`"" -Wait
 }
 
+
 # Configure eSigner
-Write-Host "===== 4. Configuring eSignerCKA Auto Mode =====" -ForegroundColor Yellow
 $masterKeyFile = Join-Path -Path $TempInstallDir -ChildPath "master.key"
 $eSignerCKATool = Get-ChildItem -Path $TempInstallDir -Filter "eSignerCKATool.exe" -Recurse | Select-Object -First 1
-Write-Output "Configuring eSignerCKA..."
+
 & $eSignerCKATool.FullName config -mode $mode -user $user -pass $plainPassword -totp $plainTotp -key $masterKeyFile -r
 
-Write-Host "===== 5. Loading the CodeSigning Certificate =====" -ForegroundColor Yellow
 # Certificate validation
 # Unload certificate
 & $eSignerCKATool.FullName unload
@@ -208,8 +238,25 @@ else {
     Write-Output "Found valid Tipalti certificate $($cert.Thumbprint)"
 }
 
-Write-Host "===== 6. Download/Intall SignTool =====" -ForegroundColor Yellow
-Write-Output "Get SignTool.exe..."
+# Prepare SignTool
+
+# else {
+#     Write-Host "Downloading Signing Tools"
+#     $winSdkSetupExe = "$downloadFolder\winsdksetup.exe"
+#     $winSdkSetupUrl = "https://bcartifacts.blob.core.windows.net/prerequisites/winsdksetup.exe"
+#             (New-Object System.Net.WebClient).DownloadFile($winSdkSetupUrl, $winSdkSetupExe)
+#     Write-Host "Installing Signing Tools"
+#     Start-Process $winSdkSetupExe -ArgumentList "/features OptionId.SigningTools /q" -Wait
+#     if (!(Test-Path "C:\Program Files (x86)\Windows Kits\10\bin\*\x64\SignTool.exe")) {
+#         throw "Cannot locate signtool.exe after installation"
+#     }
+#     $signTool = Get-ChildItem $signToolPath | 
+#     Sort-Object { [version]$_.Directory.Parent.Name } -Descending |
+#     Select-Object -First 1
+# }
+
+
+# $signtoolExe = "C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe"
 $signToolPath = "C:\Program Files (x86)\Windows Kits\10\bin\*\x64\SignTool.exe"
 if (Test-Path $signToolPath) {
     $signtoolExe = Get-ChildItem $signToolPath | 
@@ -217,7 +264,7 @@ if (Test-Path $signToolPath) {
     Select-Object -First 1
 }
 else {
-    Write-Host "Downloading SignTool.exe..."
+    Write-Host "Downloading Signing Tools"
     $winSdkSetupExe = "$downloadFolder\winsdksetup.exe"
     $winSdkSetupUrl = "https://bcartifacts.blob.core.windows.net/prerequisites/winsdksetup.exe"
     (New-Object System.Net.WebClient).DownloadFile($winSdkSetupUrl, $winSdkSetupExe)
@@ -229,40 +276,55 @@ else {
     $signToolExe = (get-item "C:\Program Files (x86)\Windows Kits\10\bin\*\x64\SignTool.exe").FullName
 }
 
-# Sign the application
-Write-Host "===== 7. Signing the application =====" -ForegroundColor Yellow
-Write-Output "Signing $appFile..."
+# # Find SignTool
+# $signToolPath = "C:\Program Files (x86)\Windows Kits\10\bin\*\x64\SignTool.exe"
+# $signTool = Get-ChildItem $signToolPath | 
+#     Sort-Object { [version]$_.Directory.Parent.Name } -Descending |
+#     Select-Object -First 1
+
+# if (-not $signTool) {
+#     Write-Error "SignTool not found"
+#     exit 1
+# }
+
 & "$signToolExe" sign /a /debug /v /fd $digestAlgorithm /tr $timestampService /td $digestAlgorithm /sha1 "$($cert.Thumbprint)" "$appFile"
-
-# Verify signature
-Write-Output "Verifying signature..."
+# & "$signToolExe" sign /s MY /debug /v /fd $digestAlgorithm /tr $timestampService /td $digestAlgorithm /sha1 "$($cert.Thumbprint)" "$appFile"
+# sign /debug /fd $digestAlgorithm /s MY /tr $timestampService /td $digestAlgorithm /sha1 $cert.Thumbprint $appFile
+# & $signTool.FullName sign /fd $digestAlgorithm /s MY /tr $timestampService /td $digestAlgorithm /sha1 $cert.Thumbprint $appFile
+# sign /debug /fd sha256 /tr http://ts.ssl.com /td sha256 /sha1 $thumbprint $appFile
+# sign /fd $digestAlgorithm /s MY /tr $timestampService /td $digestAlgorithm /sha1 $cert.Thumbprint $appFile
+# Verify if .app was signed
 & "$signToolExe" verify /pa /v "$appFile"
-
-# Clean up
-Write-Host "===== 8. Cleaning up =====" -ForegroundColor Yellow
+# $signature = Get-AuthenticodeSignature $appFile
+# if ($signature.Status -ne 'Valid') {
+#     throw "Signature verification failed"
+# }
 # Unload certificate
-& $eSignerCKATool.FullName unload
-# Clear sensitive data from memory after usage:
-[System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($passwordPtr)
-[System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($totpPtr)
-# Clean up
-if (Test-Path $downloadFolder) {
-    Remove-Item $downloadFolder -Recurse -Force -ErrorAction SilentlyContinue
-}
-if (Test-Path $TempInstallDir) {
-    Remove-Item $TempInstallDir -Recurse -Force -ErrorAction SilentlyContinue
-}
-if (Test-Path $tempExtractPath) {
-    Remove-Item $tempExtractPath -Recurse -Force -ErrorAction SilentlyContinue
-}
+# & $eSignerCKATool.FullName unload
+# # Clear sensitive data from memory after usage:
+# [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($passwordPtr)
+# [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($totpPtr)
+# # Clean up
+# if (Test-Path $downloadFolder) {
+#     Remove-Item $downloadFolder -Recurse -Force -ErrorAction SilentlyContinue
+# }
+# if (Test-Path $TempInstallDir) {
+#     Remove-Item $TempInstallDir -Recurse -Force -ErrorAction SilentlyContinue
+# }
+# if (Test-Path $TempExtractPath) {
+#     Remove-Item $TempExtractPath -Recurse -Force -ErrorAction SilentlyContinue
+# }
         
-if (Test-Path -Path $setupFolder) {
-    $UninstallExe = "$setupFolder\unins000.exe"
-    if (Test-Path -Path $UninstallExe) {
-        & $UninstallExe /silent /norestart | Out-Null
-    }
-    Remove-Item -Path $setupFolder -Recurse -Force -ErrorAction SilentlyContinue
-}
+# if (Test-Path -Path $setupFolder) {
+#     $UninstallExe = "$setupFolder\unins000.exe"
+#     if (Test-Path -Path $UninstallExe) {
+#         & $UninstallExe /silent /norestart | Out-Null
+#     }
+#     Remove-Item -Path $setupFolder -Recurse -Force -ErrorAction SilentlyContinue
+# }
+# if (Test-Path $appFolder) {
+#     Remove-Item $appFolder -Recurse -Force -ErrorAction SilentlyContinue
+# }
 
 $endTime = [DateTime]::Now
 $duration = $endTime.Subtract($startTime)
