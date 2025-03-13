@@ -35,13 +35,13 @@ $plainTotp = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($totpPtr)
 
 # AL:Go and BCContainerHelper helper libraries import
 # Write-Host "Importing AL:Go and BCContainerHelper helper libraries..."
-. (Join-Path -Path $PSScriptRoot -ChildPath "..\AL-Go-Helper.ps1" -Resolve)
-DownloadAndImportBcContainerHelper
-# $rawPath = Join-Path -Path $env:GITHUB_WORKSPACE -ChildPath "..\..\_actions\microsoft\AL-Go-Actions"
-# $basePath = (Resolve-Path $rawPath).Path
-# $versionFolder = Get-ChildItem -Path $basePath -Directory | Sort-Object Name -Descending | Select-Object -First 1
-# . (Join-Path -Path $versionFolder.FullName -ChildPath "AL-Go-Helper.ps1" -Resolve)
+# . (Join-Path -Path $PSScriptRoot -ChildPath "..\AL-Go-Helper.ps1" -Resolve)
 # DownloadAndImportBcContainerHelper
+$rawPath = Join-Path -Path $env:GITHUB_WORKSPACE -ChildPath "..\..\_actions\microsoft\AL-Go-Actions"
+$basePath = (Resolve-Path $rawPath).Path
+$versionFolder = Get-ChildItem -Path $basePath -Directory | Sort-Object Name -Descending | Select-Object -First 1
+. (Join-Path -Path $versionFolder.FullName -ChildPath "AL-Go-Helper.ps1" -Resolve)
+DownloadAndImportBcContainerHelper
 
 Write-Host "=========== Signing $appFile process ===========" -ForegroundColor Yellow
 Write-Host "===== 1. Register NavSip.dll =====" -ForegroundColor Yellow
