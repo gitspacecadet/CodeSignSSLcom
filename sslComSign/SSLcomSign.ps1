@@ -37,6 +37,7 @@ $plainTotp = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($totpPtr)
 # Write-Host "Importing AL:Go and BCContainerHelper helper libraries..."
 # . (Join-Path -Path $PSScriptRoot -ChildPath "..\AL-Go-Helper.ps1" -Resolve)
 # DownloadAndImportBcContainerHelper
+Write-Output "Base path: $env:GITHUB_WORKSPACE"
 $rawPath = Join-Path -Path $env:GITHUB_WORKSPACE -ChildPath "..\..\_actions\microsoft\AL-Go-Actions"
 $basePath = (Resolve-Path $rawPath).Path
 Write-Output "Base path: $basePath"
