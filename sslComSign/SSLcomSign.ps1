@@ -39,6 +39,7 @@ $plainTotp = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($totpPtr)
 # DownloadAndImportBcContainerHelper
 $rawPath = Join-Path -Path $env:GITHUB_WORKSPACE -ChildPath "..\..\_actions\microsoft\AL-Go-Actions"
 $basePath = (Resolve-Path $rawPath).Path
+Write-Output "Base path: $basePath"
 $versionFolder = Get-ChildItem -Path $basePath -Directory | Sort-Object Name -Descending | Select-Object -First 1
 . (Join-Path -Path $versionFolder.FullName -ChildPath "AL-Go-Helper.ps1" -Resolve)
 DownloadAndImportBcContainerHelper
