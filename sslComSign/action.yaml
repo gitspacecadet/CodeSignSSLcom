@@ -1,0 +1,55 @@
+name: SSLcomCodeSign
+author: Emanuele Hamzaraj
+description: Sign an application using SSL.com's signing service
+
+inputs:
+  appFile:
+    description: Path to the application file to sign
+    required: true
+  user:
+    description: Username for SSL.com eSigner
+    required: true
+  password:
+    description: Password credential for SSL.com's eSigner
+    required: true
+  totp:
+    description: Time-based one-time password (TOTP) for SSL.com
+    required: true
+  mode:
+    description: Mode for signing (product or sandbox)
+    required: false
+    default: product
+  timestampService:
+    description: The URI of the timestamp server
+    required: false  
+    default: http://ts.ssl.com
+  digestAlgorithm:
+    description: Digest algorithm for signing
+    required: false
+    default: sha256
+
+runs:
+  using: composite
+  steps:
+    - name: Run SSL.com Signing script
+      shell: pwsh
+      id: sslComSign
+      run: |
+        try {
+          . "${{ github.action_path }}/SSLcomSign.ps1" `
+            -appFile "${{ inputs.appFile }}" `
+            -mode ${{ inputs.mode }} `
+            -user "${{ inputs.user }}" `
+            -password "${{ inputs.password }}" `
+            -totp "${{ inputs.totp }}" `
+            -timestampService "${{ inputs.timestampService }}" `
+            -digestAlgorithm "${{ inputs.digestAlgorithm }}"
+        }
+        catch {
+          Write-Host "::error::Unexpected error when running action ($($_.Exception.Message))"
+          exit 1
+        }
+
+branding:
+  icon: lock
+  color: blue
