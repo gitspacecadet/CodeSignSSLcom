@@ -246,23 +246,23 @@ Write-Host "===== 8. Cleaning up =====" -ForegroundColor Yellow
 [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($passwordPtr)
 [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($totpPtr)
 # Clean up
-if (Test-Path $downloadFolder) {
-    Remove-Item $downloadFolder -Recurse -Force -ErrorAction SilentlyContinue
-}
-if (Test-Path $TempInstallDir) {
-    Remove-Item $TempInstallDir -Recurse -Force -ErrorAction SilentlyContinue
-}
-if (Test-Path $tempExtractPath) {
-    Remove-Item $tempExtractPath -Recurse -Force -ErrorAction SilentlyContinue
-}
+# if (Test-Path $downloadFolder) {
+#     Remove-Item $downloadFolder -Recurse -Force -ErrorAction SilentlyContinue
+# }
+# if (Test-Path $TempInstallDir) {
+#     Remove-Item $TempInstallDir -Recurse -Force -ErrorAction SilentlyContinue
+# }
+# if (Test-Path $tempExtractPath) {
+#     Remove-Item $tempExtractPath -Recurse -Force -ErrorAction SilentlyContinue
+# }
         
-if (Test-Path -Path $setupFolder) {
-    $UninstallExe = "$setupFolder\unins000.exe"
-    if (Test-Path -Path $UninstallExe) {
-        & $UninstallExe /silent /norestart | Out-Null
-    }
-    Remove-Item -Path $setupFolder -Recurse -Force -ErrorAction SilentlyContinue
-}
+# if (Test-Path -Path $setupFolder) {
+#     $UninstallExe = "$setupFolder\unins000.exe"
+#     if (Test-Path -Path $UninstallExe) {
+#         & $UninstallExe /silent /norestart | Out-Null
+#     }
+#     Remove-Item -Path $setupFolder -Recurse -Force -ErrorAction SilentlyContinue
+# }
 
 $endTime = [DateTime]::Now
 $duration = $endTime.Subtract($startTime)
