@@ -125,7 +125,6 @@ $eSignerCKATool = Join-Path -Path $TempInstallDir -ChildPath "eSignerCKATool.exe
 # Initialize $setupFolder to null to avoid referencing an undefined variable
 $setupFolder = $null
 
-if (!(Test-Path $eSignerCKATool)) {
     # Download and install eSignerCKA
     $release = Invoke-RestMethod -Uri "https://api.github.com/repos/SSLcom/eSignerCKA/releases/latest" -Headers @{ "User-Agent" = "PowerShell" }
     $targetAsset = $release.assets | Where-Object { $_.name -like "SSL.COM-eSigner-CKA_*.zip" } | Select-Object -First 1
@@ -160,7 +159,7 @@ if (!(Test-Path $eSignerCKATool)) {
     $installArgs = "/CURRENTUSER /VERYSILENT /SUPPRESSMSGBOXES /DIR=`"$TempInstallDir`""
     Write-Output "Running installer: $installerPath $installArgs"
     Start-Process $installerPath -ArgumentList $installArgs -Wait
-}
+    
 # Post-install steps
 if (-not (Test-Path $TempInstallDir)) {
     Write-Error "Installation failed - directory not found"
