@@ -238,6 +238,20 @@ Write-Output "Verifying signature..."
 & "$signToolExe" verify /pa /v "$appFile"
 
 # Set composite action output for the signed artifact
+# Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "signedArtifact=$appFile"
+
+# --- Debug Section: Output file details and signature info ---
+Write-Output "=== Debug: File Details ==="
+$fileInfo = Get-Item $appFile
+Write-Output "File: $($fileInfo.FullName)"
+Write-Output "Size: $($fileInfo.Length) bytes"
+Write-Output "Last Modified: $($fileInfo.LastWriteTime)"
+
+# Write-Output "=== Debug: Authenticode Signature Info ==="
+# $signatureInfo = Get-AuthenticodeSignature $appFile
+# Write-Output ($signatureInfo | Format-List | Out-String)
+
+# Set composite action output for the signed artifact
 Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "signedArtifact=$appFile"
 
 # Clean up
