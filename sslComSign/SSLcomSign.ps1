@@ -247,7 +247,7 @@ Write-Host "===== 8. Cleaning up =====" -ForegroundColor Yellow
 # Clear sensitive data from memory after usage:
 [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($passwordPtr)
 [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($totpPtr)
-Clean up
+
 if (Test-Path $downloadFolder) {
     Remove-Item $downloadFolder -Recurse -Force -ErrorAction SilentlyContinue
 }
