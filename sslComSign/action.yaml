@@ -31,7 +31,7 @@ inputs:
 outputs:
   signedArtifact:
     description: Path to the signed application file
-    value: ${{ steps.sslComSign.outputs.signedFile }}
+    value: ${{ steps.sslComSign.outputs.signedArtifact }}
 
 runs:
   using: composite
