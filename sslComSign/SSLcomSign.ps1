@@ -159,7 +159,7 @@ $setupFolder = $null
     $installArgs = "/CURRENTUSER /VERYSILENT /SUPPRESSMSGBOXES /DIR=`"$TempInstallDir`""
     Write-Output "Running installer: $installerPath $installArgs"
     Start-Process $installerPath -ArgumentList $installArgs -Wait
-    
+
 # Post-install steps
 if (-not (Test-Path $TempInstallDir)) {
     Write-Error "Installation failed - directory not found"
@@ -237,6 +237,9 @@ Write-Output "Signing $appFile..."
 Write-Output "Verifying signature..."
 & "$signToolExe" verify /pa /v "$appFile"
 
+# Set composite action output for the signed artifact
+Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "signedArtifact=$appFile"
+
 # Clean up
 Write-Host "===== 8. Cleaning up =====" -ForegroundColor Yellow
 # Unload certificate
@@ -244,24 +247,24 @@ Write-Host "===== 8. Cleaning up =====" -ForegroundColor Yellow
 # Clear sensitive data from memory after usage:
 [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($passwordPtr)
 [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($totpPtr)
-# Clean up
-# if (Test-Path $downloadFolder) {
-#     Remove-Item $downloadFolder -Recurse -Force -ErrorAction SilentlyContinue
-# }
-# if (Test-Path $TempInstallDir) {
-#     Remove-Item $TempInstallDir -Recurse -Force -ErrorAction SilentlyContinue
-# }
-# if (Test-Path $tempExtractPath) {
-#     Remove-Item $tempExtractPath -Recurse -Force -ErrorAction SilentlyContinue
-# }
+Clean up
+if (Test-Path $downloadFolder) {
+    Remove-Item $downloadFolder -Recurse -Force -ErrorAction SilentlyContinue
+}
+if (Test-Path $TempInstallDir) {
+    Remove-Item $TempInstallDir -Recurse -Force -ErrorAction SilentlyContinue
+}
+if (Test-Path $tempExtractPath) {
+    Remove-Item $tempExtractPath -Recurse -Force -ErrorAction SilentlyContinue
+}
         
-# if (Test-Path -Path $setupFolder) {
-#     $UninstallExe = "$setupFolder\unins000.exe"
-#     if (Test-Path -Path $UninstallExe) {
-#         & $UninstallExe /silent /norestart | Out-Null
-#     }
-#     Remove-Item -Path $setupFolder -Recurse -Force -ErrorAction SilentlyContinue
-# }
+if (Test-Path -Path $setupFolder) {
+    $UninstallExe = "$setupFolder\unins000.exe"
+    if (Test-Path -Path $UninstallExe) {
+        & $UninstallExe /silent /norestart | Out-Null
+    }
+    Remove-Item -Path $setupFolder -Recurse -Force -ErrorAction SilentlyContinue
+}
 
 $endTime = [DateTime]::Now
 $duration = $endTime.Subtract($startTime)

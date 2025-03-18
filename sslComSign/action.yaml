@@ -28,6 +28,11 @@ inputs:
     required: false
     default: sha256
 
+outputs:
+  signedArtifact:
+    description: Path to the signed application file
+    value: ${{ steps.sslComSign.outputs.signedFile }}
+
 runs:
   using: composite
   steps:
