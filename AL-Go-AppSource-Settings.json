@@ -1,0 +1,185 @@
+{
+    "keyVaultCertificateUrlSecretName":  "",
+    "microsoftTelemetryConnectionString":  "InstrumentationKey=cd2cc63e-0f37-4968-b99a-532411a314b8;IngestionEndpoint=https://northeurope-2.in.applicationinsights.azure.com/",
+    "nextMajorSchedule":  "0 23 * * 6",
+    "useGitSubmodules":  "false",
+    "type":  "AppSource App",
+    "sendExtendedTelemetryToMicrosoft":  false,
+    "appBuild":  -1,
+    "installTestApps":  [
+
+                        ],
+    "versioningStrategy":  3,
+    "installApps":  [
+
+                    ],
+    "installTestLibraries":  false,
+    "runNumberOffset":  0,
+    "codeSignCertificatePasswordSecretName":  "codeSignCertificatePassword",
+    "vsixFile":  "",
+    "country":  "us",
+    "applicationDependency":  "18.0.0.0",
+    "templateSha":  "7f5ede0b71995e4082c3b16c7865984375f4b60f",
+    "partnerTelemetryConnectionString":  "",
+    "doNotRunTests":  false,
+    "enableCodeAnalyzersOnTestApps":  false,
+    "runs-on":  "self-hosted",
+    "generateDependencyArtifact":  false,
+    "excludeEnvironments":  [
+
+                            ],
+    "keyVaultCertificatePasswordSecretName":  "",
+    "rulesetFile":  "",
+    "licenseFileUrlSecretName":  "licenseFileUrl",
+    "enableExternalRulesets":  false,
+    "memoryLimit":  "",
+    "keyVaultClientIdSecretName":  "",
+    "testFolders":  [
+                        "TestApp"
+                    ],
+    "githubRunner":  "self-hosted",
+    "trustMicrosoftNuGetFeeds":  true,
+    "doNotBuildTests":  false,
+    "environments":  [
+
+                     ],
+    "restoreDatabases":  [
+
+                         ],
+    "assignPremiumPlan":  false,
+    "shortLivedArtifactsRetentionDays":  1,
+    "artifact":  "",
+    "ghTokenWorkflowSecretName":  "ghTokenWorkflow",
+    "enableTaskScheduler":  false,
+    "pageScriptingTests":  [
+
+                           ],
+    "enableCodeCop":  true,
+    "repoVersion":  "2.0.0",
+    "doNotPublishApps":  false,
+    "githubRunnerShell":  "powershell",
+    "appFolders":  [
+                       "BaseApp"
+                   ],
+    "cacheKeepDays":  3,
+    "bcptTestFolders":  [
+
+                        ],
+    "updateDependencies":  false,
+    "cacheImageName":  "my",
+    "trustedSigning":  {
+                           "Endpoint":  "",
+                           "Account":  "",
+                           "CertificateProfile":  ""
+                       },
+    "powerPlatformSolutionFolder":  "",
+    "treatTestFailuresAsWarnings":  false,
+    "additionalCountries":  [
+
+                            ],
+    "alDoc":  {
+                  "continuousDeployment":  false,
+                  "deployToGitHubPages":  true,
+                  "maxReleases":  3,
+                  "groupByProject":  true,
+                  "includeProjects":  [
+
+                                      ],
+                  "excludeProjects":  [
+
+                                      ],
+                  "header":  "Documentation for {REPOSITORY} {VERSION}",
+                  "footer":  "Documentation for \u003ca href=\"https://github.com/{REPOSITORY}\"\u003e{REPOSITORY}\u003c/a\u003e made with \u003ca href=\"https://aka.ms/AL-Go\"\u003eAL-Go for GitHub\u003c/a\u003e, \u003ca href=\"https://go.microsoft.com/fwlink/?linkid=2247728\"\u003eALDoc\u003c/a\u003e and \u003ca href=\"https://dotnet.github.io/docfx\"\u003eDocFx\u003c/a\u003e",
+                  "defaultIndexMD":  "## Reference documentation\\n\\nThis is the generated reference documentation for [{REPOSITORY}](https://github.com/{REPOSITORY}).\\n\\nYou can use the navigation bar at the top and the table of contents to the left to navigate your documentation.\\n\\nYou can change this content by creating/editing the **{INDEXTEMPLATERELATIVEPATH}** file in your repository or use the alDoc:defaultIndexMD setting in your repository settings file (.github/AL-Go-Settings.json)\\n\\n{RELEASENOTES}",
+                  "defaultReleaseMD":  "## Release reference documentation\\n\\nThis is the generated reference documentation for [{REPOSITORY}](https://github.com/{REPOSITORY}).\\n\\nYou can use the navigation bar at the top and the table of contents to the left to navigate your documentation.\\n\\nYou can change this content by creating/editing the **{INDEXTEMPLATERELATIVEPATH}** file in your repository or use the alDoc:defaultReleaseMD setting in your repository settings file (.github/AL-Go-Settings.json)\\n\\n{RELEASENOTES}"
+              },
+    "customCodeCops":  [
+
+                       ],
+    "doNotRunPageScriptingTests":  false,
+    "appDependencies":  [
+
+                        ],
+    "doNotRunBcptTests":  false,
+    "skipUpgrade":  true,
+    "nuGetFeedSelectMode":  "LatestMatching",
+    "appDependencyProbingPaths":  [
+
+                                  ],
+    "useCompilerFolder":  false,
+    "installTestFramework":  false,
+    "keyVaultCodesignCertificateName":  "bc-code-signing-app",
+    "obsoleteTagMinAllowedMajorMinor":  "",
+    "bcptThresholds":  {
+                           "DurationWarning":  10,
+                           "DurationError":  25,
+                           "NumberOfSqlStmtsWarning":  5,
+                           "NumberOfSqlStmtsError":  10
+                       },
+    "applicationInsightsConnectionStringSecretName":  "applicationInsightsConnectionString",
+    "shell":  "powershell",
+    "deliverToAppSource":  {
+                               "mainAppFolder":  "",
+                               "productId":  "",
+                               "includeDependencies":  [
+
+                                                       ],
+                               "continuousDelivery":  false
+                           },
+    "keyVaultName":  "",
+    "failOn":  "error",
+    "gitSubmodulesTokenSecretName":  "gitSubmodulesToken",
+    "projects":  [
+
+                 ],
+    "appSourceCopMandatoryAffixes":  [
+                                         "BLL"
+                                     ],
+    "projectName":  ".",
+    "testDependencies":  [
+
+                         ],
+    "appRevision":  7,
+    "codeSignCertificateUrlSecretName":  "codeSignCertificateUrl",
+    "configPackages":  [
+
+                       ],
+    "useProjectDependencies":  false,
+    "unusedALGoSystemFiles":  [
+
+                              ],
+    "buildModes":  [
+
+                   ],
+    "companyName":  "",
+    "enableUICop":  false,
+    "templateBranch":  "",
+    "nextMinorSchedule":  "0 22 * * 6",
+    "installPerformanceToolkit":  false,
+    "pullRequestTrigger":  "pull_request_target",
+    "commitOptions":  {
+                          "messageSuffix":  "",
+                          "pullRequestAutoMerge":  false,
+                          "pullRequestLabels":  [
+
+                                                ],
+                          "createPullRequest":  true
+                      },
+    "doNotSignApps":  false,
+    "repoName":  "TibcoMsbcExtensionTest",
+    "fullBuildPatterns":  [
+
+                          ],
+    "alwaysBuildAllProjects":  false,
+    "installOnlyReferencedApps":  true,
+    "templateUrl":  "https://github.com/microsoft/AL-Go-AppSource@main",
+    "installTestRunner":  false,
+    "incrementalBuilds":  {
+                              "onPush":  false,
+                              "onPull_Request":  true,
+                              "onSchedule":  false,
+                              "retentionDays":  30,
+                              "mode":  "modifiedProjects"
+                          },
+    "adminCenterApiCredentialsSecretName":  "adminCenterApiCredentials"
+}
